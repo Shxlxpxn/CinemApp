@@ -11,23 +11,38 @@ class MainActivity : AppCompatActivity() {
             super.onCreate(savedInstanceState)
             binding = ActivityMainBinding.inflate(layoutInflater)
             setContentView(binding.root)
-            initButtons()
+
+            binding.searchBar.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                     R.id.settings -> {
+                        Toast.makeText(this, "Настройки", Toast.LENGTH_SHORT).show()
+                        true
+                     }
+                        else -> false
+                }
+            }
+            binding.searchBar.setNavigationOnClickListener{
+                Toast.makeText(this,"Меню", Toast.LENGTH_SHORT).show()
+            }
+
+
+            binding.bottomNavigation.setOnItemSelectedListener {
+
+                when (it.itemId) {
+                    R.id.favorites -> {
+                        Toast.makeText(this, "Избранное", Toast.LENGTH_SHORT).show()
+                        true
+                    }
+                    R.id.watch_later -> {
+                        Toast.makeText(this, "Посмотреть позже", Toast.LENGTH_SHORT).show()
+                        true
+                    }
+                    R.id.selections -> {
+                        Toast.makeText(this, "Подборки", Toast.LENGTH_SHORT).show()
+                        true
+                    }
+                    else -> false
+                }
+            }
         }
-    private fun initButtons() {
-        binding.button.setOnClickListener {
-            Toast.makeText(this, "Меню", Toast.LENGTH_SHORT).show()
-        }
-        binding.button2.setOnClickListener {
-            Toast.makeText(this, "Избранное", Toast.LENGTH_SHORT).show()
-        }
-        binding.button3.setOnClickListener {
-            Toast.makeText(this, "Посмотреть позже", Toast.LENGTH_SHORT).show()
-        }
-        binding.button4.setOnClickListener {
-            Toast.makeText(this, "Подборки", Toast.LENGTH_SHORT).show()
-        }
-        binding.button5.setOnClickListener {
-            Toast.makeText(this, "Настройки", Toast.LENGTH_SHORT).show()
-        }
-    }
 }
