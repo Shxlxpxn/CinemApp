@@ -1,20 +1,23 @@
 package com.example.myapplication
 
+import TopSpacingItemDecoration
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.amsdevelops.filmssearch.DetailsActivity
 import com.example.myapplication.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
         private lateinit var binding: ActivityMainBinding
         private lateinit var filmsAdapter: FilmListRecyclerAdapter
         val filmsDataBase = listOf(
-        Film("Fallout", R.drawable.Fallout, "In a future, post-apocalyptic Los Angeles brought about by nuclear decimation, citizens must live in underground bunkers to protect themselves from radiation, mutants and bandits."),
-        Film("The Godfather", R.drawable.god_father, "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son."),
+        Film("The Godfather", R.drawable.godfather, "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son."),
         Film("Breaking Bad", R.drawable.breakingbad, "A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine with a former student in order to secure his family's future."),
         Film("Baby Reindeer", R.drawable.babyreindeer, "The story follows writer and performer Richard Gadd's warped relationship with a female stalker and the impact it has on him as he is ultimately forced to face a deep, dark buried trauma."),
         Film("Schindler's List", R.drawable.schindler, "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis."),
-        Film("Forrest Gump", R.drawable.forrest, "The history of the United States from the 1950s to the '70s unfolds from the perspective of an Alabama man with an IQ of 75, who yearns to be reunited with his childhood sweetheart."),
+        Film("Forrest Gump", R.drawable.forrestg, "The history of the United States from the 1950s to the '70s unfolds from the perspective of an Alabama man with an IQ of 75, who yearns to be reunited with his childhood sweetheart."),
         Film("The Matrix", R.drawable.matrix, "When a beautiful stranger leads computer hacker Neo to a forbidding underworld, he discovers the shocking truth--the life he knows is the elaborate deception of an evil cyber-intelligence."),
         Film("Interstellar", R.drawable.interstellar, "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival."),
         Film("Joker", R.drawable.joker, "In Gotham City, mentally troubled comedian Arthur Fleck is disregarded and mistreated by society. He then embarks on a downward spiral of revolution and bloody crime. This path brings him face-to-face with his alter-ego: the Joker."),
@@ -23,14 +26,13 @@ class MainActivity : AppCompatActivity() {
     )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initNavigation()
 
         //находим наш RV
-        main_recycler.apply {
-            //Инициализируем наш адаптер в конструктор передаем анонимно инициализированный интерфейс,
-            //оставим его пока пысты, он нам понадобится во второй части задания
+        binding.mainRecycler.apply {
             filmsAdapter = FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener{
                 override fun click(film: Film) {
                     //Создаем бандл и кладем туда объект с данными фильма
@@ -38,7 +40,6 @@ class MainActivity : AppCompatActivity() {
                     //Первым параметром указывается ключ, по которому потом будем искать, вторым сам
                     //передаваемы объект
                     bundle.putParcelable("film", film)
-                    //Запускаем наше активити
                     val intent = Intent(this@MainActivity, DetailsActivity::class.java)
                     //Прикрепляем бандл к интенту
                     intent.putExtras(bundle)
@@ -59,7 +60,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initNavigation() {
-        top_bar.setOnMenuItemClickListener {
+        binding.topAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.settings -> {
                     Toast.makeText(this, "Настройки", Toast.LENGTH_SHORT).show()
@@ -69,7 +70,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        bottom_navigation.setOnNavigationItemSelectedListener {
+        binding.bottomNavigation.setOnItemSelectedListener {
 
             when (it.itemId) {
                 R.id.favorites -> {

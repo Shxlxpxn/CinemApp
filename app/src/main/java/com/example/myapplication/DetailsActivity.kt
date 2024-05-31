@@ -1,20 +1,25 @@
-package com.example.myapplication
+package com.amsdevelops.filmssearch
 
-import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.os.Bundle
+import com.example.myapplication.Film
+import com.example.myapplication.databinding.ActivityDetailsBinding
+import com.example.myapplication.databinding.ActivityMainBinding
 
 class DetailsActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityDetailsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_details)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        binding = ActivityDetailsBinding.inflate(layoutInflater)
+
+        // Получаем наш фильм из переданного бандла
+        val film = intent.extras?.getString("film") as Film
+
+        // Осуществляем биндинг данных
+        binding.detailsToolbar.title = film.title
+        binding.detailsPoster.setImageResource(film.poster)
+        binding.detailsDescription.text = film.description
     }
 }
