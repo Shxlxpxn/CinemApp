@@ -1,4 +1,4 @@
-package com.amsdevelops.filmssearch
+package com.example.myapplication
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,9 +13,10 @@ class DetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Получаем наш фильм из переданного бандла
-        val film = intent.extras?.getString("film") as Film
+        val film = intent.extras?.get("film") as Film
 
         // Осуществляем биндинг данных
         binding.detailsToolbar.title = film.title
