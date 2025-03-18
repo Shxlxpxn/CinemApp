@@ -10,6 +10,7 @@ import com.example.mycinema.view.fragments.DetailsFragment
 import com.example.mycinema.view.fragments.FavoritesFragment
 import com.example.mycinema.view.fragments.HomeFragment
 import com.example.mycinema.view.fragments.SelectionsFragment
+import com.example.mycinema.view.fragments.SettingsFragment
 import com.example.mycinema.view.fragments.WatchLaterFragment
 
 class MainActivity : AppCompatActivity() {
@@ -76,6 +77,13 @@ class MainActivity : AppCompatActivity() {
                     supportFragmentManager.beginTransaction()
                         .replace(binding.fragmentPlaceholder.id, SelectionsFragment())
                         .addToBackStack("Подборки") // Add a name for back stack entry
+                        .commit()
+                    true
+                }
+                R.id.settings -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(binding.fragmentPlaceholder.id, SettingsFragment())
+                        .addToBackStack("Настройки") // Add a name for back stack entry
                         .commit()
                     true
                 }
