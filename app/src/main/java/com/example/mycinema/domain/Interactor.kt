@@ -16,7 +16,12 @@ class Interactor(private val repo: MainRepository, private val retrofitService: 
         retrofitService.getFilms(getDefaultCategoryFromPreferences(), API.API_KEY, "ru-RU", page).enqueue(object : Callback<Root> {
             override fun onResponse(call: Call<Root>, response: Response<Root>) {
                 //При успехе мы вызываем метод передаем onSuccess и в этот коллбэк список фильмов
-                callback.onSuccess(Converter.convertApiListToDtoList(response.body()?.results))
+                val list = Converter.convertApiListToDtoList(response.body()?.results)
+                //Кладем фильмы в бд
+                list.forEach {
+                    repo.putToDb(film = it)
+                }
+                callback.onSuccess(list)
             }
 
             override fun onFailure(call: Call<Root>, t: Throwable) {
@@ -31,4 +36,6 @@ class Interactor(private val repo: MainRepository, private val retrofitService: 
     }
     //Метод для получения настроек
     fun getDefaultCategoryFromPreferences() = preferences.geDefaultCategory()
+
+    fun getFilmsFromDB(): List<Film> = repo.getAllFromDB()
 }
