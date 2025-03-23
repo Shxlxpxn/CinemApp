@@ -10,6 +10,7 @@ import com.example.myapplication.view.fragments.DetailsFragment
 import com.example.myapplication.view.fragments.FavoritesFragment
 import com.example.myapplication.view.fragments.HomeFragment
 import com.example.myapplication.view.fragments.SelectionsFragment
+import com.example.myapplication.view.fragments.SettingsFragment
 import com.example.myapplication.view.fragments.WatchLaterFragment
 
 class MainActivity : AppCompatActivity() {
@@ -79,11 +80,18 @@ class MainActivity : AppCompatActivity() {
                         .commit()
                     true
                 }
+                R.id.settings -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(binding.fragmentPlaceholder.id, SettingsFragment())
+                        .addToBackStack("Настройки") // Add a name for back stack entry
+                        .commit()
+                    true
+                }
                 else -> false
             }
         }
     }
-  //  private fun checkFragmentExistence(tag: String): Fragment? = supportFragmentManager.findFragmentByTag(tag)
+   private fun checkFragmentExistence(tag: String): Fragment? = supportFragmentManager.findFragmentByTag(tag)
 
     private fun changeFragment(fragment: Fragment, tag: String) {
         supportFragmentManager
