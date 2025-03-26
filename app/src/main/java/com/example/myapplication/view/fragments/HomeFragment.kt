@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -67,12 +68,15 @@ class HomeFragment : Fragment() {
                 }
                 //Фильтруем список на поискк подходящих сочетаний
                 val result = filmsDataBase.filter {
-                    //Чтобы все работало правильно, нужно и запроси и имя фильма приводить к нижнему регистру
                     it.title.lowercase(Locale.getDefault()).contains(newText.lowercase(Locale.getDefault()))
                 }
                 viewModel.filmsListLiveData.observe(viewLifecycleOwner, Observer<List<Film>> {
                     filmsDataBase = it
                 })
+                viewModel.showProgressBar.observe(viewLifecycleOwner, Observer<Boolean> {
+                    binding.progressBar.isVisible = it
+                })
+
                 //Добавляем в адаптер
                 filmsAdapter.addItems(result)
                 return true
@@ -85,7 +89,7 @@ class HomeFragment : Fragment() {
             filmsAdapter = FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
                 override fun click(film: Film) {
                     (requireActivity() as? MainActivity)?.launchDetailsFragment(film)
-                    }
+                }
             })
             //Присваиваем адаптер
             adapter = filmsAdapter
@@ -99,4 +103,5 @@ class HomeFragment : Fragment() {
         filmsAdapter.addItems(filmsDataBase)
         AnimationHelper.performFragmentCircularRevealAnimation(binding.root, requireActivity(), 1)
     }
+
 }
