@@ -22,6 +22,7 @@ android {
     buildFeatures {
         buildConfig = true
         viewBinding = true
+        dataBinding = true
     }
 
 
@@ -71,7 +72,11 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.6.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:3.12.6")
     //Dagger
-    implementation ("com.google.dagger:dagger:2.28")
-    kapt ("com.google.dagger:dagger-compiler:2.28")
+    implementation ("com.google.dagger:dagger:2.48")
+    kapt ("com.google.dagger:dagger-compiler:2.48")
+    //Room
+    implementation ("androidx.room:room-runtime:$room_version")
+    kapt ("androidx.room:room-compiler:$room_version")
+
 
 }
