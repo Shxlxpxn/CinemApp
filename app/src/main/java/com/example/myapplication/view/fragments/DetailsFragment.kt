@@ -12,7 +12,7 @@ import com.example.myapplication.view.MainActivity
 import com.example.myapplication.R
 import com.example.myapplication.data.ApiConstants
 import com.example.myapplication.databinding.FragmentDetailsBinding
-import com.example.myapplication.domain.Film
+import com.example.myapplication.data.entity.Film
 
 class DetailsFragment : Fragment() {
 

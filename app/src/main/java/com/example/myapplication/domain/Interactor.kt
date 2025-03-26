@@ -1,6 +1,7 @@
 package com.example.myapplication.domain
 
 import com.example.myapplication.data.*
+import com.example.myapplication.data.entity.Film
 import com.example.myapplication.data.entity.Root
 import com.example.myapplication.data.preferences.PreferenceProvider
 import com.example.myapplication.utils.Converter
@@ -17,7 +18,7 @@ class Interactor(private val repo: MainRepository, private val retrofitService: 
                 val list = Converter.convertApiListToDTOList(response.body()?.results)
                 //Кладем фильмы в бд
                 list.forEach {
-                    repo.putToDb(film = it)
+                    repo.putToDb(list)
                 }
                 callback.onSuccess(list)
             }

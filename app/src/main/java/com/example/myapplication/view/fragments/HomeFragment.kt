@@ -14,7 +14,7 @@ import com.example.myapplication.view.rv_adapters.FilmListRecyclerAdapter
 import com.example.myapplication.view.MainActivity
 import com.example.myapplication.utils.AnimationHelper
 import com.example.myapplication.databinding.FragmentHomeBinding
-import com.example.myapplication.domain.Film
+import com.example.myapplication.data.entity.Film
 import com.example.myapplication.viewmodel.HomeFragmentViewModel
 import java.util.Locale
 
