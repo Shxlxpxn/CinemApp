@@ -1,6 +1,8 @@
 package com.example.myapplication.domain
 
+import androidx.lifecycle.LiveData
 import com.example.myapplication.data.*
+import com.example.myapplication.data.entity.Film
 import com.example.myapplication.data.entity.Root
 import com.example.myapplication.data.preferences.PreferenceProvider
 import com.example.myapplication.utils.Converter
@@ -16,10 +18,8 @@ class Interactor(private val repo: MainRepository, private val retrofitService: 
             override fun onResponse(call: Call<Root>, response: Response<Root>) {
                 val list = Converter.convertApiListToDTOList(response.body()?.results)
                 //Кладем фильмы в бд
-                list.forEach {
-                    repo.putToDb(film = it)
-                }
-                callback.onSuccess(list)
+                repo.putToDb(list)
+                callback.onSuccess()
             }
 
             override fun onFailure(call: Call<Root>, t: Throwable) {
@@ -33,5 +33,5 @@ class Interactor(private val repo: MainRepository, private val retrofitService: 
     //Метод для получения настроек
     fun getDefaultCategoryFromPreferences() = preferences.geDefaultCategory()
 
-    fun getFilmsFromDB(): List<Film> = repo.getAllFromDB()
+    fun getFilmsFromDB(): LiveData<List<Film>> = repo.getAllFromDB()
 }

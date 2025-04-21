@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ActivityMainBinding
-import com.example.myapplication.domain.Film
+import com.example.myapplication.data.entity.Film
 import com.example.myapplication.view.fragments.DetailsFragment
 import com.example.myapplication.view.fragments.FavoritesFragment
 import com.example.myapplication.view.fragments.HomeFragment
