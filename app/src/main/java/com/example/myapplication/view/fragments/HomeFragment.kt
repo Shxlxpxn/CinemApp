@@ -17,6 +17,11 @@ import com.example.myapplication.utils.AnimationHelper
 import com.example.myapplication.databinding.FragmentHomeBinding
 import com.example.myapplication.data.entity.Film
 import com.example.myapplication.viewmodel.HomeFragmentViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 
 
@@ -26,6 +31,7 @@ class HomeFragment : Fragment() {
     private val binding
         get() = _binding!!
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
+    private lateinit var scope: CoroutineScope
     private val viewModel by lazy {
     ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java) }
     private var filmsDataBase = listOf<Film>()
@@ -70,12 +76,16 @@ class HomeFragment : Fragment() {
                 val result = filmsDataBase.filter {
                     it.title.lowercase(Locale.getDefault()).contains(newText.lowercase(Locale.getDefault()))
                 }
-                viewModel.filmsListLiveData.observe(viewLifecycleOwner, Observer<List<Film>> {
-                    filmsDataBase = it
-                })
-                viewModel.showProgressBar.observe(viewLifecycleOwner, Observer<Boolean> {
-                    binding.progressBar.isVisible = it
-                })
+                scope = CoroutineScope(Dispatchers.IO).also { scope ->
+                    scope.launch {
+                        viewModel.filmsListData.collect {
+                            withContext(Dispatchers.Main) {
+                                filmsAdapter.addItems(it)
+                                filmsDataBase = it
+                            }
+                        }
+                    }
+                }
 
                 //Добавляем в адаптер
                 filmsAdapter.addItems(result)
@@ -83,6 +93,7 @@ class HomeFragment : Fragment() {
             }
 
         })
+
 
         //находим наш RV
         binding.mainRecycler.apply {
@@ -103,5 +114,10 @@ class HomeFragment : Fragment() {
         filmsAdapter.addItems(filmsDataBase)
         AnimationHelper.performFragmentCircularRevealAnimation(binding.root, requireActivity(), 1)
     }
+    override fun onStop() {
+        super.onStop()
+        scope.cancel()
+    }
+
 
 }

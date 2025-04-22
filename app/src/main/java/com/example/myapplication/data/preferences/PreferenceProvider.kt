@@ -25,7 +25,7 @@ class PreferenceProvider(context: Context) {
         preference.edit { putString(KEY_DEFAULT_CATEGORY, category) }
     }
     //Забираем категорию
-    fun geDefaultCategory(): String {
+    fun getDefaultCategory(): String {
         return preference.getString(KEY_DEFAULT_CATEGORY, DEFAULT_CATEGORY) ?: DEFAULT_CATEGORY
     }
     //Ключи для наших настроек, по ним мы их будем получать
