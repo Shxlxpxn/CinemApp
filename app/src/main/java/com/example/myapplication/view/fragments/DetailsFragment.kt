@@ -1,6 +1,7 @@
 package com.example.myapplication.view.fragments
 
 import android.Manifest
+
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -19,8 +20,8 @@ import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.data.ApiConstants
+import com.example.myapplication.data.entity.Film
 import com.example.myapplication.databinding.FragmentDetailsBinding
-import com.example.myapplication.domain.Film
 import com.example.myapplication.viewmodel.DetailsFragmentViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
