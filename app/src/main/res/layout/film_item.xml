@@ -40,7 +40,7 @@
             android:textAlignment="center"
             android:padding="8dp"
             android:shadowColor="@color/black"
-            android:background="#C485CF"
+            android:background="#A60B01"
             android:shadowRadius="10"
             android:textColor="@color/white"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"

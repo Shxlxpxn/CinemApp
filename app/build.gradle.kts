@@ -74,7 +74,14 @@ dependencies {
     //Dagger
     implementation ("com.google.dagger:dagger:2.48")
     kapt ("com.google.dagger:dagger-compiler:2.48")
-//Coroutines
+    //Coroutines
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2")
+    //Room
+    implementation ("androidx.room:room-runtime:$room_version")
+    implementation ("androidx.room:room-rxjava3:2.3.0-beta02")
+    kapt ("androidx.room:room-compiler:$room_version")
+    //RxJava
+    implementation ("io.reactivex.rxjava3:rxandroid:3.0.0")
+    implementation ("io.reactivex.rxjava3:rxjava:3.0.10")
 }

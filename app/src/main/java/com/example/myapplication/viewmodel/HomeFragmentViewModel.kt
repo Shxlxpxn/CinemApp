@@ -1,20 +1,20 @@
 package com.example.myapplication.viewmodel
 
 
+import android.database.Observable
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.App
 import com.example.myapplication.data.entity.Film
 import com.example.myapplication.domain.Interactor
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+
 import javax.inject.Inject
 
 class HomeFragmentViewModel : ViewModel() {
-    val showProgressBar: Channel<Boolean>
     @Inject
-    //Инициализируем интерактор
     lateinit var interactor: Interactor
-    val filmsListData: Flow<List<Film>>
+    val filmsListData: Observable<List<Film>>
+    val showProgressBar: BehaviorSubject<Boolean>
 
     init {
         App.instance.dagger.inject(this)
