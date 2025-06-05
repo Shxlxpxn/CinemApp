@@ -17,9 +17,11 @@ import com.example.myapplication.utils.AnimationHelper
 import com.example.myapplication.databinding.FragmentHomeBinding
 import com.example.myapplication.data.entity.Film
 import com.example.myapplication.viewmodel.HomeFragmentViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
@@ -78,14 +80,12 @@ class HomeFragment : Fragment() {
                 }
                 scope = CoroutineScope(Dispatchers.IO).also { scope ->
                     scope.launch {
-                        viewModel.filmsListData.collect {
-                            withContext(Dispatchers.Main) {
+                        viewModel.filmsListData.observeOn(AndroidSchedulers.mainThread()).subscribe() {
                                 filmsAdapter.addItems(it)
                                 filmsDataBase = it
                             }
                         }
                     }
-                }
 
                 //Добавляем в адаптер
                 filmsAdapter.addItems(result)
@@ -114,10 +114,5 @@ class HomeFragment : Fragment() {
         filmsAdapter.addItems(filmsDataBase)
         AnimationHelper.performFragmentCircularRevealAnimation(binding.root, requireActivity(), 1)
     }
-    override fun onStop() {
-        super.onStop()
-        scope.cancel()
-    }
-
 
 }

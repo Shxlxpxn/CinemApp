@@ -13,7 +13,7 @@ import javax.inject.Singleton
 class DatabaseModule {
     @Singleton
     @Provides
-    fun provideFilmDao(context: Context) =
+    fun provideFilmDao(context: Context): FilmDao =
         Room.databaseBuilder(
             context,
             AppDatabase::class.java,

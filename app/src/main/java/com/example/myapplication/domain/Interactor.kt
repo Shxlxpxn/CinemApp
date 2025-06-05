@@ -1,7 +1,7 @@
 package com.example.myapplication.domain
 
 
-import android.database.Observable
+import io.reactivex.rxjava3.core.Observable
 import com.example.myapplication.data.*
 import com.example.myapplication.data.entity.Film
 import com.example.myapplication.data.entity.Root

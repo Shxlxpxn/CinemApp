@@ -2,7 +2,7 @@ package com.example.myapplication.data
 
 
 
-import android.database.Observable
+import io.reactivex.rxjava3.core.Observable
 import com.example.myapplication.data.dao.FilmDao
 import com.example.myapplication.data.entity.Film
 
