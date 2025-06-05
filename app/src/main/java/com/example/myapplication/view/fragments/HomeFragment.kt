@@ -114,10 +114,4 @@ class HomeFragment : Fragment() {
         filmsAdapter.addItems(filmsDataBase)
         AnimationHelper.performFragmentCircularRevealAnimation(binding.root, requireActivity(), 1)
     }
-    override fun onStop() {
-        super.onStop()
-        scope.cancel()
-    }
-
-
 }

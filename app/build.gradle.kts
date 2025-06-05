@@ -65,7 +65,7 @@ dependencies {
     implementation("com.google.android.material:material:1.2.1")
     implementation ("androidx.recyclerview:recyclerview:1.1.0")
     implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
     implementation ("androidx.room:room-ktx:$room_version")
     //Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
