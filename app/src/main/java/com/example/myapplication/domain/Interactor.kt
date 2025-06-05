@@ -44,6 +44,7 @@ class Interactor(private val repo: MainRepository, private val retrofitService: 
         }
     })
 }
+
     fun saveDefaultCategoryToPreferences(category: String) {
         preferences.saveDefaultCategory(category)
     }
