@@ -65,6 +65,7 @@ dependencies {
     implementation("com.google.android.material:material:1.2.1")
     implementation ("androidx.recyclerview:recyclerview:1.1.0")
     implementation ("androidx.room:room-ktx:$room_version")
+    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     //Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.6.0")

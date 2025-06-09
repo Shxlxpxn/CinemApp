@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.view.rv_adapters.FilmListRecyclerAdapter
@@ -16,57 +15,97 @@ import com.example.myapplication.view.MainActivity
 import com.example.myapplication.utils.AnimationHelper
 import com.example.myapplication.databinding.FragmentHomeBinding
 import com.example.myapplication.data.entity.Film
+import com.example.myapplication.utils.AutoDisposable
 import com.example.myapplication.viewmodel.HomeFragmentViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Locale
-
+import com.example.myapplication.utils.addTo
 
 class HomeFragment : Fragment() {
-
-    private var _binding: FragmentHomeBinding? = null
-    private val binding
-        get() = _binding!!
-    private lateinit var filmsAdapter: FilmListRecyclerAdapter
-    private lateinit var scope: CoroutineScope
     private val viewModel by lazy {
-    ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java) }
+        ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java)
+    }
+    private val autoDisposable = AutoDisposable()
+
+    private lateinit var filmsAdapter: FilmListRecyclerAdapter
+    private lateinit var binding: FragmentHomeBinding
     private var filmsDataBase = listOf<Film>()
-    //Используем backing field
-    set(value) {
-        //Если придет такое же значение то мы выходим из метода
-        if (field == value) return
-        //Если прило другое значение, то кладем его в переменную
-        field = value
-        //Обновляем RV адаптер
-        filmsAdapter.addItems(field)
+        //Используем backing field
+        set(value) {
+            //Если придет такое же значение то мы выходим из метода
+            if (field == value) return
+            //Если прило другое значение, то кладем его в переменную
+            field = value
+            //Обновляем RV адаптер
+            filmsAdapter.addItems(field)
+        }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        autoDisposable.bindTo(lifecycle)
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+    ): View {
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        AnimationHelper.performFragmentCircularRevealAnimation(binding.homeFragmentRoot, requireActivity(), 1)
 
+        initSearchView()
+        initPullToRefresh()
+        //находим наш RV
+        initRecycler()
+        //Кладем нашу БД в RV
 
+        viewModel.filmsListData
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { list ->
+                filmsAdapter.addItems(list)
+                filmsDataBase = list
+            }
+            .addTo(autoDisposable)
+        viewModel.showProgressBar
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                binding.progressBar.isVisible = it
+            }
+            .addTo(autoDisposable)
+    }
+
+    private fun initPullToRefresh() {
+        //Вешаем слушатель, чтобы вызвался pull to refresh
+        binding.pullToRefresh.setOnRefreshListener {
+            //Чистим адаптер(items нужно будет сделать паблик или создать для этого публичный метод)
+            filmsAdapter.clearItems()
+            //Делаем новый запрос фильмов на сервер
+            viewModel.getFilms()
+            //Убираем крутящиеся колечко
+            binding.pullToRefresh.isRefreshing = false
+        }
+    }
+
+    private fun initSearchView() {
+        binding.searchView.setOnClickListener {
+            binding.searchView.isIconified = false
+        }
+
+        //Подключаем слушателя изменений введенного текста в поиска
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
+
             //Этот метод отрабатывает на каждое изменения текста
             override fun onQueryTextChange(newText: String): Boolean {
                 //Если ввод пуст то вставляем в адаптер всю БД
@@ -76,43 +115,33 @@ class HomeFragment : Fragment() {
                 }
                 //Фильтруем список на поискк подходящих сочетаний
                 val result = filmsDataBase.filter {
-                    it.title.lowercase(Locale.getDefault()).contains(newText.lowercase(Locale.getDefault()))
+                    //Чтобы все работало правильно, нужно и запроси и имя фильма приводить к нижнему регистру
+                    it.title.lowercase(Locale.getDefault())
+                        .contains(newText.lowercase(Locale.getDefault()))
                 }
-                scope = CoroutineScope(Dispatchers.IO).also { scope ->
-                    scope.launch {
-                        viewModel.filmsListData.observeOn(AndroidSchedulers.mainThread()).subscribe() {
-                                filmsAdapter.addItems(it)
-                                filmsDataBase = it
-                            }
-                        }
-                    }
-
                 //Добавляем в адаптер
                 filmsAdapter.addItems(result)
                 return true
             }
-
         })
+    }
 
-
-        //находим наш RV
+    private fun initRecycler() {
         binding.mainRecycler.apply {
-            filmsAdapter = FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-                override fun click(film: Film) {
-                    (requireActivity() as? MainActivity)?.launchDetailsFragment(film)
-                }
-            })
+            filmsAdapter =
+                FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
+                    override fun click(film: Film) {
+                        (requireActivity() as MainActivity).launchDetailsFragment(film)
+                    }
+                })
             //Присваиваем адаптер
             adapter = filmsAdapter
             //Присвои layoutmanager
-            layoutManager = LinearLayoutManager(requireActivity())
+            layoutManager = LinearLayoutManager(requireContext())
             //Применяем декоратор для отступов
             val decorator = TopSpacingItemDecoration(8)
             addItemDecoration(decorator)
         }
-        //Кладем нашу БД в RV
-        filmsAdapter.addItems(filmsDataBase)
-        AnimationHelper.performFragmentCircularRevealAnimation(binding.root, requireActivity(), 1)
     }
 
 }

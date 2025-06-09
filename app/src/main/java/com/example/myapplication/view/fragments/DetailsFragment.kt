@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -26,17 +27,16 @@ import com.example.myapplication.viewmodel.DetailsFragmentViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 class DetailsFragment : Fragment() {
     private lateinit var film: Film
     private lateinit var binding: FragmentDetailsBinding
     private val viewModel: DetailsFragmentViewModel by viewModels()
-    private val job = Job()
-    private val scope = CoroutineScope(Dispatchers.IO + job)
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,12 +83,16 @@ class DetailsFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        job.cancel()
+        scope.cancel()
     }
 
     private fun setFilmsDetails() {
         //Получаем наш фильм из переданного бандла
-        film = arguments?.get("film") as Film
+        film = arguments?.getParcelable("film") ?: run {
+            Toast.makeText(requireContext(), "Film data is missing", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.popBackStack()
+            return
+        }
 
         //Устанавливаем заголовок
         binding.detailsToolbar.title = film.title
@@ -161,43 +165,33 @@ class DetailsFragment : Fragment() {
     }
 
     private fun saveToGallery(bitmap: Bitmap) {
-        //Проверяем версию системы
+        val contentResolver = requireContext().contentResolver
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            //Создаем объект для передачи данных
             val contentValues = ContentValues().apply {
-                //Составляем информацию для файла(имя, тип, дата создания, куда сохранять и т.д.)
                 put(MediaStore.Images.Media.TITLE, film.title.handleSingleQuote())
-                put(
-                    MediaStore.Images.Media.DISPLAY_NAME,
-                    film.title.handleSingleQuote()
-                )
+                put(MediaStore.Images.Media.DISPLAY_NAME, film.title.handleSingleQuote())
                 put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-                put(
-                    MediaStore.Images.Media.DATE_ADDED,
-                    System.currentTimeMillis() / 1000
-                )
+                put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
                 put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
                 put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/FilmsSearchApp")
             }
-            //Получаем ссылку на объект Content resolver, которые помогает передвать информацию из приложения во вне
-            val contentResolver = requireActivity().contentResolver
+
             val uri = contentResolver.insert(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 contentValues
             )
-            //Открываем канал для записи на диск
-            val outputStream = contentResolver.openOutputStream(uri!!)
-            uri.let {
+
+            uri?.let {
                 contentResolver.openOutputStream(it)?.use { outputStream ->
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                 }
-            }            //Закрываем поток
-            outputStream?.close()
+            }
         } else {
             //Тоже, но для более старых версий ОС
             @Suppress("DEPRECATION")
             MediaStore.Images.Media.insertImage(
-                requireActivity().contentResolver,
+                requireContext().contentResolver,
                 bitmap,
                 film.title.handleSingleQuote(),
                 film.description.handleSingleQuote()
