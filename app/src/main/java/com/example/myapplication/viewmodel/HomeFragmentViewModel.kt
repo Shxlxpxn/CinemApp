@@ -1,6 +1,5 @@
 package com.example.myapplication.viewmodel
 
-
 import io.reactivex.rxjava3.core.Observable
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.App
@@ -25,5 +24,7 @@ class HomeFragmentViewModel : ViewModel() {
 
     fun getFilms() {
         interactor.getFilmsFromApi(1)
+
+   fun getSearchResult(search: String) = interactor.getSearchResultFromApi(search)
     }
 }

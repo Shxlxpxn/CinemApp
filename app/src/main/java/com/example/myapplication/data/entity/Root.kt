@@ -3,9 +3,10 @@ package com.example.myapplication.data.entity
 import com.google.gson.annotations.SerializedName
 
 data class Root(
-    val page: Long,
     @SerializedName("page")
-    val results: List<Result>,
+    val page: Int,
+    @SerializedName("results")
+    val tmdbFilms: List<Result>,
     @SerializedName("total_pages")
     val totalPages: Long,
     @SerializedName("total_results")
@@ -29,7 +30,7 @@ data class Result(
     @SerializedName("popularity")
     val popularity: Double,
     @SerializedName("poster_path")
-    val posterPath: String,
+    val posterPath: String?,
     @SerializedName("release_date")
     val releaseDate: String,
     @SerializedName("title")
