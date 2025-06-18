@@ -3,8 +3,9 @@ package com.example.myapplication.data.entity
 import com.google.gson.annotations.SerializedName
 
 data class Root(
-    val page: Long,
     @SerializedName("page")
+    val page: Long,
+    @SerializedName("results")
     val results: List<Result>,
     @SerializedName("total_pages")
     val totalPages: Long,
