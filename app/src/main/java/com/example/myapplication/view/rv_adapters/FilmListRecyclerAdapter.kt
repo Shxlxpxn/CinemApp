@@ -9,7 +9,7 @@ import com.example.myapplication.databinding.FilmItemBinding
 import com.example.myapplication.data.entity.Film
 
 class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val items = mutableListOf<Film>()
+    val items = mutableListOf<Film>()
     override fun getItemCount() = items.size
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmViewHolder {
         val binding = FilmItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)

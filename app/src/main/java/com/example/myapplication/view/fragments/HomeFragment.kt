@@ -112,7 +112,7 @@ class HomeFragment : Fragment() {
         })
             .subscribeOn(Schedulers.io())
             .map {
-                it.toLowerCase(Locale.getDefault()).trim()
+                it.lowercase(Locale.getDefault()).trim()
             }
             .debounce(800, TimeUnit.MILLISECONDS)
             .filter {

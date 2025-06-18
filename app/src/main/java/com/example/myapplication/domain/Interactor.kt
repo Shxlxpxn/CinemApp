@@ -46,7 +46,7 @@ class Interactor(private val repo: MainRepository, private val retrofitService: 
 
     fun getSearchResultFromApi(search: String): Observable<List<Film>> = retrofitService.getFilmFromSearch(ApiConstants.API_KEY, "ru-RU", search, 1)
         .map {
-            Converter.convertApiListToDTOList(it.tmdbFilms)
+            Converter.convertApiListToDTOList(it.results)
         }
 
     fun saveDefaultCategoryToPreferences(category: String) {

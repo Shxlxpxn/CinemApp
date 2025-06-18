@@ -6,7 +6,7 @@ data class Root(
     @SerializedName("page")
     val page: Int,
     @SerializedName("results")
-    val tmdbFilms: List<Result>,
+    val results: List<Result>,
     @SerializedName("total_pages")
     val totalPages: Long,
     @SerializedName("total_results")
@@ -30,7 +30,7 @@ data class Result(
     @SerializedName("popularity")
     val popularity: Double,
     @SerializedName("poster_path")
-    val posterPath: String?,
+    val posterPath: String,
     @SerializedName("release_date")
     val releaseDate: String,
     @SerializedName("title")
