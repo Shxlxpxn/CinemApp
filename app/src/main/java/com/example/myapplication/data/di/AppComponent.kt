@@ -5,6 +5,7 @@ import com.example.myapplication.data.di.modules.DatabaseModule
 import com.example.myapplication.data.di.modules.DomainModule
 import com.example.myapplication.data.di.modules.RemoteModule
 import com.example.myapplication.viewmodel.HomeFragmentViewModel
+import com.example.myapplication.viewmodel.SettingsFragmentViewModel
 import dagger.Component
 import javax.inject.Singleton
 
@@ -18,6 +19,8 @@ import javax.inject.Singleton
     ]
 )
 interface AppComponent {
-    //метод для того, чтобы появилась внедрять зависимости в HomeFragmentViewModel
+    //метод для того, чтобы появилась возможность внедрять зависимости в HomeFragmentViewModel
     fun inject(homeFragmentViewModel: HomeFragmentViewModel)
+    //метод для того, чтобы появилась возможность внедрять зависимости в SettingsFragmentViewModel
+    fun inject(settingsFragmentViewModel: SettingsFragmentViewModel)
 }

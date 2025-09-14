@@ -1,33 +1,29 @@
 package com.example.myapplication.viewmodel
 
-import androidx.lifecycle.MutableLiveData
+
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.App
-import com.example.myapplication.domain.Film
+import com.example.myapplication.data.entity.Film
 import com.example.myapplication.domain.Interactor
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class HomeFragmentViewModel : ViewModel() {
-    val filmsListLiveData: MutableLiveData<List<Film>> = MutableLiveData()
-
-    //Инициализируем интерактор
+    val showProgressBar: Channel<Boolean>
     @Inject
+    //Инициализируем интерактор
     lateinit var interactor: Interactor
+    val filmsListData: Flow<List<Film>>
 
     init {
         App.instance.dagger.inject(this)
-        interactor.getFilmsFromApi(1, object : ApiCallback {
-            override fun onSuccess(films: List<Film>) {
-                filmsListLiveData.postValue(films)
-            }
-
-            override fun onFailure() {
-            }
-        })
+        showProgressBar = interactor.progressBarState
+        filmsListData  = interactor.getFilmsFromDB()
+        getFilms()
     }
 
-    interface ApiCallback {
-        fun onSuccess(films: List<Film>)
-        fun onFailure()
+    fun getFilms() {
+        interactor.getFilmsFromApi(1)
     }
 }

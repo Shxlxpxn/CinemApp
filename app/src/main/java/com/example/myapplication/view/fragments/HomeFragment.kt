@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,8 +15,13 @@ import com.example.myapplication.view.rv_adapters.FilmListRecyclerAdapter
 import com.example.myapplication.view.MainActivity
 import com.example.myapplication.utils.AnimationHelper
 import com.example.myapplication.databinding.FragmentHomeBinding
-import com.example.myapplication.domain.Film
+import com.example.myapplication.data.entity.Film
 import com.example.myapplication.viewmodel.HomeFragmentViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 
 
@@ -25,6 +31,7 @@ class HomeFragment : Fragment() {
     private val binding
         get() = _binding!!
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
+    private lateinit var scope: CoroutineScope
     private val viewModel by lazy {
     ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java) }
     private var filmsDataBase = listOf<Film>()
@@ -67,12 +74,19 @@ class HomeFragment : Fragment() {
                 }
                 //Фильтруем список на поискк подходящих сочетаний
                 val result = filmsDataBase.filter {
-                    //Чтобы все работало правильно, нужно и запроси и имя фильма приводить к нижнему регистру
                     it.title.lowercase(Locale.getDefault()).contains(newText.lowercase(Locale.getDefault()))
                 }
-                viewModel.filmsListLiveData.observe(viewLifecycleOwner, Observer<List<Film>> {
-                    filmsDataBase = it
-                })
+                scope = CoroutineScope(Dispatchers.IO).also { scope ->
+                    scope.launch {
+                        viewModel.filmsListData.collect {
+                            withContext(Dispatchers.Main) {
+                                filmsAdapter.addItems(it)
+                                filmsDataBase = it
+                            }
+                        }
+                    }
+                }
+
                 //Добавляем в адаптер
                 filmsAdapter.addItems(result)
                 return true
@@ -80,12 +94,13 @@ class HomeFragment : Fragment() {
 
         })
 
+
         //находим наш RV
         binding.mainRecycler.apply {
             filmsAdapter = FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
                 override fun click(film: Film) {
                     (requireActivity() as? MainActivity)?.launchDetailsFragment(film)
-                    }
+                }
             })
             //Присваиваем адаптер
             adapter = filmsAdapter

@@ -11,7 +11,7 @@ import com.example.myapplication.view.rv_adapters.FilmListRecyclerAdapter
 import com.example.myapplication.view.MainActivity
 import com.example.myapplication.utils.AnimationHelper
 import com.example.myapplication.databinding.FragmentWatchLaterBinding
-import com.example.myapplication.domain.Film
+import com.example.myapplication.data.entity.Film
 
 class WatchLaterFragment : Fragment() {
 

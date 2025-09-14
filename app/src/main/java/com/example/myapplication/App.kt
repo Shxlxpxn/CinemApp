@@ -2,15 +2,10 @@ package com.example.myapplication
 
 import android.app.Application
 import com.amsdevelops.filmssearch.di.AppComponent
-import com.example.myapplication.data.ApiConstants
-import com.example.myapplication.data.MainRepository
-import com.example.myapplication.data.TmdbApi
-import com.example.myapplication.domain.Interactor
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
+import com.amsdevelops.filmssearch.di.DaggerAppComponent
+import com.example.myapplication.data.di.modules.DatabaseModule
+import com.example.myapplication.data.di.modules.DomainModule
+import com.example.myapplication.data.di.modules.RemoteModule
 
 class App : Application() {
     lateinit var dagger: AppComponent
@@ -19,7 +14,11 @@ class App : Application() {
         super.onCreate()
         instance = this
         //Создаем компонент
-        dagger = DaggerAppComponent.create()
+        dagger = DaggerAppComponent.builder()
+            .remoteModule(RemoteModule())
+            .databaseModule(DatabaseModule())
+            .domainModule(DomainModule(this))
+            .build()
     }
 
     companion object {
